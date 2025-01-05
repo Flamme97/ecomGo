@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -25,11 +26,15 @@ func NewAPIServer(addr string, db *sql.DB) *APIServer{
 	}
 }
 
-func (s *APIServer) Run() error {
-	router := GetRouter()
+// func (s *APIServer) Run() error {
+// 	 router := GetRouter()
+
+// 	 userHandler := NewHandler()
+
+// 	 userHandler.handleRegister()
 	
-	return http.ListenAndServe(s.Addr, router)
-}
+// 	return http.ListenAndServe(s.Addr, router)
+// }
 
 
 func GetRouter() *chi.Mux {
@@ -50,30 +55,32 @@ func GetRouter() *chi.Mux {
 	const apiPath = "/v1"
 
 	huma.Register(routerWriteApi, huma.Operation{
-		OperationID:   " helloworld",
+		OperationID:   " Register User",
 		Method:        http.MethodPost,
-		Path:          apiPath + "/helloworld",
+		Path:          apiPath + "/register",
 		Summary:       "",
-		Description:   "HelloWorldbasic",
+		Description:   "Creating a account in our system",
 		Tags:          []string{},
 		Errors:        []int{400},
 		DefaultStatus: 201,
 	}, func(ctx context.Context, input *struct{}) (*struct{}, error) {
-		return nil, nil
+		return handleRegister(ctx, input)
 	})
 	
 	huma.Register(routerReadApi, huma.Operation{
-		OperationID:   "getstarted",
+		OperationID:   "Login",
 		Method:        http.MethodGet,
-		Path:          apiPath + "/Gettingstarted",
-		Summary:       "setting up basics",
-		Description:   "This endpoint returns mechanical component serial number metadata.",
-		Tags:          []string{"setting basics"},
+		Path:          apiPath + "/login",
+		Summary:       "login with username and password",
+		Description:   "This endpoint is to access the user.",
+		Tags:          []string{"We trying"},
 		Errors:        []int{400},
 		DefaultStatus: 200,
 	}, func(ctx context.Context, input *struct{}) (*struct{}, error) {
-		return nil, nil
+		return handleLogin(ctx, input)
 	})
+	
+	fmt.Println("running server on port :8080")
 
 return router 
 }
